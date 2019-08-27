@@ -87,7 +87,7 @@ func (e *EurekaConnection) readAppInto(app *Application) error {
 func (e *EurekaConnection) GetApps() (map[string]*Application, error) {
 	slug := EurekaURLSlugs["Apps"]
 	reqURL := e.generateURL(slug)
-	log.Debugf("Getting all apps from url %s", reqURL)
+	//log.Debugf("Getting all apps from url %s", reqURL)
 	body, rcode, err := getBody(reqURL, e.UseJson)
 	if err != nil {
 		log.Errorf("Couldn't get apps, error: %s", err.Error())
@@ -114,8 +114,8 @@ func (e *EurekaConnection) GetApps() (map[string]*Application, error) {
 	for i, a := range r.Applications {
 		apps[a.Name] = r.Applications[i]
 	}
-	for name, app := range apps {
-		log.Debugf("Parsing metadata for app %s", name)
+	for _, app := range apps {
+		//log.Debugf("Parsing metadata for app %s", name)
 		app.ParseAllMetadata()
 	}
 	return apps, nil
@@ -784,7 +784,7 @@ func (e EurekaConnection) UpdateInstanceStatus(ins *Instance, status StatusType)
 func (e *EurekaConnection) HeartBeatInstance(ins *Instance) error {
 	slug := fmt.Sprintf("%s/%s/%s", EurekaURLSlugs["Apps"], ins.App, ins.Id())
 	reqURL := e.generateURL(slug)
-	log.Debugf("Sending heartbeat with url %s", reqURL)
+	//log.Debugf("Sending heartbeat with url %s", reqURL)
 	req, err := http.NewRequest("PUT", reqURL, nil)
 	if err != nil {
 		log.Errorf("Could not create request for heartbeat, error: %s", err.Error())
