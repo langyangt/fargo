@@ -786,19 +786,22 @@ func (e *EurekaConnection) HeartBeatInstance(ins *Instance) error {
 	reqURL := e.generateURL(slug)
 	//log.Debugf("Sending heartbeat with url %s", reqURL)
 	req, err := http.NewRequest("PUT", reqURL, nil)
+	
 	if err != nil {
 		log.Errorf("Could not create request for heartbeat, error: %s", err.Error())
 		return err
 	}
-	_, rcode, err := netReq(req)
+	body, rcode, err := netReq(req)
 	if err != nil {
+		log.Info(reqURL)
+		log.Info("sending heartbeat and return body is: %s  return code is: %s, error: %s", string(body), rcode, err.Error())
 		log.Errorf("Error sending heartbeat for Instance=%s App=%s, error: %s", ins.Id(), ins.App, err.Error())
 		return err
 	}
 	if rcode != http.StatusOK {
+		log.Info(reqURL)
+		log.Info("sending heartbeat and return body is: %s  return code is: %s, error: %s", string(body), rcode, err.Error())
 		log.Errorf("Sending heartbeat for Instance=%s App=%s returned code %d", ins.Id(), ins.App, rcode)
-		e.RegisterInstance(ins)
-		log.Info(" 发送心跳失败，重新注册到注册中心")
 		return &unsuccessfulHTTPResponse{rcode, "heartbeat failed"}
 	}
 	return nil
